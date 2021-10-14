@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Blackbaud SKY API Authorization Code Flow Tutorial
 
 Blackbaud SKY API Authorization Code Flow demo application.
@@ -15,3 +16,6 @@ Feel free to leave feedback by filing an [issue](https://github.com/blackbaud/sk
 ## Run this app on your server
 
 To run this application in your environment, follow the instructions found within our  [Auth Code Flow Tutorial](https://developer.blackbaud.com/skyapi/docs/code/auth-flows/auth-code-flow/nodejs) within our documentation. 
+=======
+# bb-hubspot
+>>>>>>> e4d4c65b37953f566e21abbb8a7be08429e16549
