@@ -72,9 +72,9 @@
                  *  Access token is valid. Fetch roles records.
                  */
                 console.log("Access token is valid");
+                $scope.pageTitle = "Student";
                 $http.get('/api/users/extended/' + studentBaseRoleId).then(function (res) {
                     $scope.users = res.data.value;
-                    $scope.pageTitle = "Student";
                     console.log("getUsersByRole() response: " + res.data.count + " " + $scope.pageTitle + "(s) retrieved." )
                     // console.log('\n' + JSON.stringify(res, null, '\t'));
                     $scope.isReady = true;
