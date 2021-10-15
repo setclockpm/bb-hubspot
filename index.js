@@ -43,6 +43,7 @@
 
     // Register our SKY API routes.
     app.get('/api/roles', routes.auth.checkSession, routes.api.getRoles);
+    app.get('/api/gradelevels', routes.auth.checkSession, routes.api.getGradeLevels);
     app.get('/api/users/:userId', routes.auth.checkSession, routes.api.getUser);
     app.get('/api/users/by/:roleIds', routes.auth.checkSession, routes.api.getUserByRoles);
     app.get('/api/users/extended/:baseRoleIds', routes.auth.checkSession, routes.api.getUserExtendedByRoles);

@@ -37,6 +37,20 @@
     }
 
     /**
+     * Returns the collection of school grade levels offered.
+     * @name getGradeLevels
+     * @param {Object} request
+     * @param {Object} response
+     * @returns {string}
+     */
+    function getGradeLevels(request, response) {
+        Sky.getGradeLevels(request, function (results) {
+            // console.log('getRoles() response:\n' + JSON.stringify(results, null, '\t'));
+            response.send(results);
+        });
+    }
+
+    /**
      * Returns a paginated collection of users, limited to 100 per page.
      * @name getUserByRoles
      * @param {Object} request
@@ -68,6 +82,7 @@
 
 
     module.exports = {
+        getGradeLevels: getGradeLevels,
         getRoles: getRoles,
         getUser: getUser,
         getUserExtendedByRoles: getUserExtendedByRoles,

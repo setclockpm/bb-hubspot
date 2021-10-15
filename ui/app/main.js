@@ -4,6 +4,7 @@
     const studentBaseRoleId = 14; // role_id: 16073
     const teacherBaseRoleID = 15;
     const teacherRoleID = 16074;
+    const studentRoleID = 16073;
 
     angular.module('AuthCodeFlowTutorial', ['ngRoute'])
         .config(function ($routeProvider) {
@@ -71,15 +72,10 @@
                  *  Access token is valid. Fetch roles records.
                  */
                 console.log("Access token is valid");
-                // $http.get('/api/roles').then(function (res) {
-                //     $scope.roles = res.data.value;
-                //     console.log("getRoles() response: " + res.data.count + " roles retrieved.")
-                //     // console.log('\n' + JSON.stringify(res, null, '\t'));
-                //     $scope.isReady = true;
-                // });
-                $http.get('/api/users/by/' + teacherRoleID).then(function (res) {
-                    $scope.teachers = res.data.value;
-                    console.log("getUsersByRole() response: " + res.data.count + " user(s) retrieved." )
+                $http.get('/api/users/extended/' + studentBaseRoleId).then(function (res) {
+                    $scope.users = res.data.value;
+                    $scope.pageTitle = "Student";
+                    console.log("getUsersByRole() response: " + res.data.count + " " + $scope.pageTitle + "(s) retrieved." )
                     // console.log('\n' + JSON.stringify(res, null, '\t'));
                     $scope.isReady = true;
                 });

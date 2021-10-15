@@ -18,7 +18,6 @@
     function get(request, endpoint, callback) {
         return proxy(request, 'GET', endpoint, '', callback);
     }
-
      /**
      * Wrap all POST proxy calls.
      * @private
@@ -30,7 +29,6 @@
     function post(request, endpoint, body, callback) {
         return proxy(request, 'POST', endpoint, body, callback);
     }
-
 
 
 
@@ -56,6 +54,16 @@
     }
 
     /**
+     * Gets a list of all the core grade levels
+     * @name getGradeLevels
+     * @param {Object} request
+     * @param {Function} callback
+     */
+    function getGradeLevels(request, callback) {
+        get(request, 'gradelevels/', callback);
+    }
+
+    /**
      * Returns a paginated collection of users, limited to 100 per page.
      * @name getUserByRoles
      * @param {Object} request
@@ -78,6 +86,9 @@
     }
 
 
+
+
+
     /*****************
      * NOT IN USE
      * Posts a note to the specified constituent (kept here to reference a post request for later)
@@ -90,6 +101,10 @@
         post(request, 'constituents/' + constituentId + '/notes', body, callback);
     }
     /*****************
+
+
+
+
 
 
     /**
@@ -129,6 +144,7 @@
      *  {@link getUser}
      */
     module.exports = {
+        getGradeLevels: getGradeLevels,
         getUser: getUser,
         getRoles: getRoles,
         getUserByRoles: getUserByRoles,
