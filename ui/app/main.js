@@ -75,9 +75,12 @@
                 $scope.pageTitle = "Student";
                 $http.get('/api/users/extended/' + studentBaseRoleId).then(function (res) {
                     $scope.users = res.data.value;
-                    console.log("getUsersByRole() response: " + res.data.count + " " + $scope.pageTitle + "(s) retrieved." )
-                    // console.log('\n' + JSON.stringify(res, null, '\t'));
                     $scope.isReady = true;
+                    console.log("getUsersByRole() response: " + res.data.count + " " + $scope.pageTitle + "(s) retrieved." )
+                    // Ordering students by student ID, also sorts them by grade / grad year
+                    $scope.users.sort(function (a, b) {
+                      return a.student_id - b.student_id;
+                    });
                 });
             });
 
@@ -119,7 +122,7 @@
                     $http.get('/api/users/extended/' + $routeParams.baseRoleIds).then(function (res) {
                         $scope.users = res.data.value;
                         $scope.pageTitle = "Users";
-                        console.log("getUsersExtendedByRole() response: " + res.data.count + " user(s) retrieved." )
+                        console.log(res.data.count + " user(s) retrieved." )
                         // console.log('\n' + JSON.stringify(res, null, '\t'));
                         $scope.isReady = true;
                     });
