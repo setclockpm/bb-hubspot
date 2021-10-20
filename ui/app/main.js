@@ -3,8 +3,10 @@
 
     const studentBaseRoleId = 14; // role_id: 16073
     const teacherBaseRoleID = 15;
+    const parentBaseRoleId = 16;
     const teacherRoleID = 16074;
     const studentRoleID = 16073;
+    const homeAddress = 1497;
 
     angular.module('AuthCodeFlowTutorial', ['ngRoute'])
         .config(function ($routeProvider) {
@@ -99,6 +101,9 @@
                 }
             };
         })
+         /**
+         * Cntroller for handling / displaying student and parent info.
+         */
         .controller('UsersController', function ($scope, $http, $routeParams) {
 
             /**
@@ -130,7 +135,84 @@
                     $http.get('/api/users/' + $routeParams.userId).then(function (res) {
                         $scope.user = res.data;
                         $scope.pageTitle = $scope.user.display;
-                        console.log("getUser() response: " + '\n' + JSON.stringify(res, null, '\t'))
+                        $scope.phoneNumbers = $scope.user.phones;
+                        $scope.parents = [];
+
+
+                        let studentRoles = $scope.user.roles.filter(role => role.name == "Student");
+                        console.log("Student roles: " + '\n' + JSON.stringify(studentRoles, null, '\t'));
+                        console.log("Student roles exist: " + '\n' + JSON.stringify(studentRoles.length > 0, null, '\t'));
+                        $scope.isStudent = (studentRoles.length > 0);
+
+                        if ($scope.user.addresses.some) {
+                            $scope.homeAddress = $scope.user.addresses.filter(address => address.type_id == homeAddress)[0];
+                        }
+                        if ($scope.phoneNumbers.some) {
+                            $scope.phoneNumbers.filter(phone => phone.type_id == "Home");
+                        }
+                        if ($scope.isStudent && $scope.user.relationships.some) {
+                            $scope.parents = $scope.user.relationships.filter(person => person.user_one_role === "Parent");
+                        }
+
+                        console.log("$scope.isStudent: " + $scope.isStudent);
+                        console.log("getUser() response: " + '\n' + JSON.stringify(res, null, '\t'));
+                        $scope.isReady = true;
+                    });
+                }
+            });
+        })
+        .controller('ParentsController', function ($scope, $http, $routeParams) {
+
+            /**
+             *  Checks the user access token.
+             */
+            $http.get('/auth/authenticated').then(function (res) {
+                $scope.isAuthenticated = res.data.authenticated;
+
+                if ($scope.isAuthenticated === false) {
+                    $scope.isReady = true;
+                    return;
+                }
+
+                /**
+                 *  Access token is valid. Fetch roles records.
+                 */
+                console.log("ParentsController - Valid access token.");
+
+                if ($routeParams.baseRoleIds) {
+                    // @TODO: Verify $routeParams.baseRoleIds works with comma separated values
+                    $http.get('/api/users/extended/' + $routeParams.baseRoleIds).then(function (res) {
+                        $scope.users = res.data.value;
+                        $scope.pageTitle = "Users";
+                        console.log(res.data.count + " user(s) retrieved." )
+                        // console.log('\n' + JSON.stringify(res, null, '\t'));
+                        $scope.isReady = true;
+                    });
+                } else if ($routeParams.userId) {
+                    $http.get('/api/users/' + $routeParams.userId).then(function (res) {
+                        $scope.user = res.data;
+                        $scope.pageTitle = $scope.user.display;
+                        $scope.phoneNumbers = $scope.user.phones;
+                        $scope.parents = [];
+
+
+                        let studentRoles = $scope.user.roles.filter(role => role.name == "Student");
+                        console.log("Student roles: " + '\n' + JSON.stringify(studentRoles, null, '\t'));
+                        console.log("Student roles exist: " + '\n' + JSON.stringify(studentRoles.length > 0, null, '\t'));
+                        $scope.isStudent = (studentRoles.length > 0);
+
+                        if ($scope.user.addresses.some) {
+                            $scope.homeAddress = $scope.user.addresses.filter(address => address.type_id == homeAddress)[0];
+                        }
+                        if ($scope.phoneNumbers.some) {
+                            $scope.phoneNumbers.filter(phone => phone.type_id == "Home");
+                        }
+                        if ($scope.isStudent && $scope.user.relationships.some) {
+                            $scope.parents = $scope.user.relationships.filter(person => person.user_one_role === "Parent");
+                        }
+
+                        console.log("$scope.isStudent: " + $scope.isStudent);
+                        console.log("getUser() response: " + '\n' + JSON.stringify(res, null, '\t'));
                         $scope.isReady = true;
                     });
                 }
