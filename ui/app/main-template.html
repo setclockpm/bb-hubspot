@@ -57,13 +57,13 @@
     -->
     <div ng-if="isAuthenticated">
       <div class="well">
-        <h3 class="well-title">{{pageTitle}} records: ({{users.length}})</h3>
+        <h3 class="well-title">{{pageTitle}} records: ({{students.length}})</h3>
         <p>
           Uses the <a href="https://developer.blackbaud.com/skyapi/apis/school" target="_blank">School</a>
           endpoint reference within the Blackbaud SKY API.
         </p>
       </div>
-      <div class="table-responsive" ng-if="users">
+      <div class="table-responsive" ng-if="students">
         <table class="table table-striped table-hover">
           <thead>
             <tr>
@@ -76,7 +76,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="user in users">
+            <tr ng-repeat="user in students">
               <td><a href="{{user.profile_url}}" target="_blank">{{ user.student_id }}</a></td>
               <td>
                 <a href="#/users/{{user.id}}">{{ user.first_name + ' ' + user.last_name }} </a>
@@ -84,7 +84,10 @@
               <td>{{ user.student_info.grade_level_description }}</td>
               <td>{{ user.student_info.grad_year }}</td>
               <td>{{ user.email }}</td>
-              <td>Relationships: {{ user.relationships.length }}</td>
+              <td>
+                Relationships: {{ user.relationships.length }} <br>
+                Parents: {{ user.parents.length }}
+              </td>
             </tr>
           </tbody>
         </table>

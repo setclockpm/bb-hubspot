@@ -76,12 +76,17 @@
                 console.log("Access token is valid");
                 $scope.pageTitle = "Student";
                 $http.get('/api/users/extended/' + studentBaseRoleId).then(function (res) {
-                    $scope.users = res.data.value;
+                    let users = res.data.value;
                     $scope.isReady = true;
                     console.log("getUsersByRole() response: " + res.data.count + " " + $scope.pageTitle + "(s) retrieved." )
                     // Ordering students by student ID, also sorts them by grade / grad year
-                    $scope.users.sort(function (a, b) {
+                    $scope.students = users.sort(function (a, b) {
                       return a.student_id - b.student_id;
+                    });
+                    $scope.students.forEach(function (student) {
+                        student.parents = student.relationships.filter(person => person.user_one_role === "Parent");
+                        console.log(student.first_name + " " + student.last_name + "'s parents: ");
+                        console.log(student.parents.length);
                     });
                 });
             });
@@ -168,7 +173,6 @@
              */
             $http.get('/auth/authenticated').then(function (res) {
                 $scope.isAuthenticated = res.data.authenticated;
-
                 if ($scope.isAuthenticated === false) {
                     $scope.isReady = true;
                     return;
@@ -177,11 +181,53 @@
                 /**
                  *  Access token is valid. Fetch roles records.
                  */
+                console.log("Access token is valid");
+                $scope.pageTitle = "Parent";
+                $http.get('/api/users/extended/' + studentBaseRoleId).then(function (res) {
+                    let users = res.data.value;
+                    $scope.isReady = true;
+                    console.log("getUsersByRole() response: " + res.data.count + " " + $scope.pageTitle + "(s) retrieved." )
+                    // Ordering students by student ID, also sorts them by grade / grad year
+                    $scope.students = users.sort(function (a, b) {
+                      return a.student_id - b.student_id;
+                    });
+
+                    $scope.students.forEach(function (student) {
+                        student.parents = student.filter(person => person.user_one_role === "Parent");
+                    });
+
+                });
+            });
+
+            /**
+             * Opens a new popup window and redirects it to our login route.
+             * After a successful login within the popup, the popup is redirected to the `#/auth-success`
+             * route, which closes the popup window and returns focus to the parent window.
+             */
+            $scope.popupLogin = function () {
+                var popup;
+
+                popup = $window.open('auth/login?redirect=/%23/auth-success', 'login', 'height=450,width=600');
+
+                if ($window.focus) {
+                    popup.focus();
+                }
+            };get('/auth/authenticated').then(function (res) {
+                $scope.isAuthenticated = res.data.authenticated;
+
+                if ($scope.isAuthenticated === false) {
+                    $scope.isReady = true;
+                    return;
+                }
+
+                /**
+                 *  Access token is valid. Fetch parents' records.
+                 */
                 console.log("ParentsController - Valid access token.");
 
-                if ($routeParams.baseRoleIds) {
+                if ($routeParams.studentBaseRoleId) {
                     // @TODO: Verify $routeParams.baseRoleIds works with comma separated values
-                    $http.get('/api/users/extended/' + $routeParams.baseRoleIds).then(function (res) {
+                    $http.get('/api/users/extended/' + $routeParams.studentBaseRoleId).then(function (res) {
                         $scope.users = res.data.value;
                         $scope.pageTitle = "Users";
                         console.log(res.data.count + " user(s) retrieved." )
