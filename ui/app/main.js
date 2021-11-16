@@ -73,20 +73,39 @@
                 /**
                  *  Access token is valid. Fetch roles records.
                  */
-                console.log("Access token is valid");
+                console.log("getUsersByRole() response: ");
                 $scope.pageTitle = "Student";
                 $http.get('/api/users/extended/' + studentBaseRoleId).then(function (res) {
-                    let users = res.data.value;
                     $scope.isReady = true;
-                    console.log("getUsersByRole() response: " + res.data.count + " " + $scope.pageTitle + "(s) retrieved." )
+                    $scope.parentsOfMultipleEnrolledPupils = [];
                     // Ordering students by student ID, also sorts them by grade / grad year
-                    $scope.students = users.sort(function (a, b) {
+                    $scope.students = res.data.value.sort(function (a, b) {
                       return a.student_id - b.student_id;
                     });
+                    console.log($scope.students.length + " " + $scope.pageTitle + "(s) retrieved." );
+
+                    const parentsHash = new Map();
+                    let parents = [];
+
                     $scope.students.forEach(function (student) {
                         student.parents = student.relationships.filter(person => person.user_one_role === "Parent");
-                        console.log(student.first_name + " " + student.last_name + "'s parents: ");
-                        console.log(student.parents.length);
+                        student.parents.forEach(function (parent) {
+                            parent.studentFirstName = student.first_name;
+                            parent.studentLastName = student.last_name;
+                            parent.studentGradeLevel = student.student_info.grade_level;
+                            // If parent exists in this set then we found a parent with another currently enrolled pupil
+                            if (parentsHash.has(parent.user_one_id)) {
+                                $scope.parentsOfMultipleEnrolledPupils.push(parent);
+                            } else {
+                                parentsHash.set(parent.user_one_id, parent);
+                            }
+                        })
+                        parents = parents.concat(student.parents);
+                        console.log(student.first_name + " " + student.last_name + " has " + student.parents.length + " parent(s).\n");
+                        console.log("Running total of parents: " + parents.length);
+                        console.log("Running total of unique parents: " + parentsHash.size);
+                        console.log("Running total of parents with more than 1 currently enrolled child: " + $scope.parentsOfMultipleEnrolledPupils.length);
+
                     });
                 });
             });
@@ -184,18 +203,37 @@
                 console.log("Access token is valid");
                 $scope.pageTitle = "Parent";
                 $http.get('/api/users/extended/' + studentBaseRoleId).then(function (res) {
-                    let users = res.data.value;
                     $scope.isReady = true;
-                    console.log("getUsersByRole() response: " + res.data.count + " " + $scope.pageTitle + "(s) retrieved." )
+                    $scope.parentsOfMultipleEnrolledPupils = [];
                     // Ordering students by student ID, also sorts them by grade / grad year
-                    $scope.students = users.sort(function (a, b) {
+                    $scope.students = res.data.value.sort(function (a, b) {
                       return a.student_id - b.student_id;
                     });
+                    console.log($scope.students.length + " " + $scope.pageTitle + "(s) retrieved." );
+
+                    const parentsHash = new Map();
+                    // let parents = [];
 
                     $scope.students.forEach(function (student) {
-                        student.parents = student.filter(person => person.user_one_role === "Parent");
-                    });
+                        student.parents = student.relationships.filter(person => person.user_one_role === "Parent");
+                        student.parents.forEach(function (parent) {
+                            parent.studentFirstName = student.first_name;
+                            parent.studentLastName = student.last_name;
+                            parent.studentGradeLevel = student.student_info.grade_level;
+                            // If parent exists in this set then we found a parent with another currently enrolled pupil
+                            if (parentsHash.has(parent.user_one_id)) {
+                                $scope.parentsOfMultipleEnrolledPupils.push(parent);
+                            } else {
+                                parentsHash.set(parent.user_one_id, parent);
+                            }
+                        })
+                        // parents = parents.concat(student.parents);
+                        console.log(student.first_name + " " + student.last_name + " has " + student.parents.length + " parent(s).\n");
+                        // console.log("Running total of parents: " + parents.length);
+                        console.log("Running total of unique parents: " + parentsHash.size);
+                        console.log("Running total of parents with more than 1 currently enrolled child: " + $scope.parentsOfMultipleEnrolledPupils.length);
 
+                    });
                 });
             });
 

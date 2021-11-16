@@ -76,17 +76,25 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="user in students">
-              <td><a href="{{user.profile_url}}" target="_blank">{{ user.student_id }}</a></td>
+            <tr ng-repeat="student in students">
+              <td><a href="{{student.profile_url}}" target="_blank">{{ student.student_id }}</a></td>
               <td>
-                <a href="#/users/{{user.id}}">{{ user.first_name + ' ' + user.last_name }} </a>
+                <a href="#/users/{{student.id}}">{{ student.first_name + ' ' + student.last_name }} </a>
               </td>
-              <td>{{ user.student_info.grade_level_description }}</td>
-              <td>{{ user.student_info.grad_year }}</td>
-              <td>{{ user.email }}</td>
+              <td>{{ student.student_info.grade_level_description }}</td>
+              <td>{{ student.student_info.grad_year }}</td>
+              <td>{{ student.email }}</td>
               <td>
-                Relationships: {{ user.relationships.length }} <br>
-                Parents: {{ user.parents.length }}
+                Parents: {{ student.parents.length }} <br>
+                <span ng-repeat="parent in student.parents">
+                  <a href="#/users/{{parent.user_one_id}}">{{ parent.first_name }} {{ parent.last_name }}</a><br>
+                </span>
+                Siblings: {{ student.relationships.length - student.parents.length }} <br>
+                <span ng-repeat="relation in student.relationships">
+                  <span ng-if="relation.user_one_role == 'Sibling'">
+                    <a href="#/users/{{relation.user_one_id}}">{{ relation.first_name }} {{ relation.last_name }}</a><br>
+                  </span>
+                </span>
               </td>
             </tr>
           </tbody>
